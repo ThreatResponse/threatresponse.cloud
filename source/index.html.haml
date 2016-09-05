@@ -1,0 +1,100 @@
+#index
+  #about.section
+    .mui-row
+      .mui-col-md-6
+        %h2 Open Source Incident Response Toolkit
+        %h3 What's New
+        %ul
+          %li
+            =link_to 'See us at DerbyCon!', "https://www.derbycon.com/events/hardening-aws-environments-and-automating-incident-response-for-aws-compromises/"
+          %li
+            = link_to 'Network World Article', 'http://www.networkworld.com/article/3106729/security/four-free-tools-for-handling-amazon-web-services-security-incident-response.html'
+          %li
+            = link_to 'Dark Reading Article', 'http://www.darkreading.com/cloud/6-things-to-know-for-securing-amazon-web-services/d/d-id/1326595'
+          -blog.articles[0...3].each do |article|
+            %li
+              =link_to article.title, article.url
+          %li
+            =link_to 'Whitepaper', 'todo.html'
+
+
+
+
+
+      .mui-col-md-6
+        = partial 'modules/video'
+
+  #suite.section
+    %h1 ThreatResponse Suite
+    .tools
+      .tool
+        =image_tag 'aws_ir.png'
+        %h3 AWS_IR CLI
+        %p
+          AWS_IR automates your incident response with zero security preparedness assumptions. It can handle key and host compromises and collects all pertinate data in an S3 bucket along with the ThreatResponse Web workstation.
+
+      .tool
+        =image_tag 'tr_web.png'
+        %h3 ThreatResponse Web
+        %p
+          This first of its kind IR analysis workstation orchestrates several in-depth types of analysis across your AWS cloud. You can investigate suspicious activity, add instances to your case, view and run further analysis on all captured assets, and run the ThreatPrep advisory panel.
+      .tool
+        =image_tag 'margarita.png'
+        %h3 Margarita Shotgun
+        %p
+          Command line utility that works with or without Amazon EC2 instances to parallelize remote memory acquisition.
+
+          %ol
+            %li Identify the running kernel
+            %li Load the appropriate module from the ThreatResponse kernel module warehouse
+            %li Acquire the memory by streaming to an S3 bucket using multi-part upload over ssh
+
+    .section-footer
+      %h2 Three Projects: One Goal
+      %h2 Improved Incident Response
+
+  #team.section
+    %h1 The Team
+    .mui-row
+      .team-member
+        .team-member__info
+          %h3 Andrew Krug
+          %h4 Creator ThreatResponse
+          %h4 @andrewkrug
+        =image_tag 'andrew.jpg'
+
+      .team-member
+        .team-member__info
+          %h3 Alex McCormack
+          %h4 Creator ThreatResponse
+          %h4 @amccormack
+        =image_tag 'alex.jpg'
+
+      .team-member
+        .team-member__info
+          %h3 Joel Ferrier
+          %h4 Creator Margarita Shotgun
+          %h4 @joelferrier
+        =image_tag 'joel.jpg'
+
+      .team-member
+        .team-member__info
+          %h3 Jeff Parr
+          %h4 Full Stack Engineer
+          %h4 @jparr
+        =image_tag 'jeff.jpg'
+
+      .team-member
+        .team-member__info.team-member__info-empty
+          %h3 Join Us!
+        =image_tag 'join.png'
+      .team-member
+        .team-member__info.team-member__info-empty
+          %h3 Become a contributor today!
+        =image_tag 'join.png'
+
+  #contact.section
+    %h1 Subscribe to our mailing list
+    .mui-col-md-8.mui-col-md-offset-2
+      = partial 'modules/signup.html'
+

@@ -1,0 +1,81 @@
+a.light
+  color: $mui-text-light
+  &:hover, &:focus
+    color: $mui-text-light
+
+ol, ul
+  padding-left: 1.5em
+
+#content-wrapper
+  padding-top: 2em
+
+.section
+  h1
+    @extend .mui--divider-bottom
+    font-weight: 700
+    font-size: 2em
+
+#about
+  h2, h3
+    margin-top: 0
+  h2
+    font-weight: 700
+    line-height: 1.2
+  h3
+    font-size: 1.2em
+    @extend .mui--divider-bottom
+
+  ul, li
+    list-style-type: none
+    padding-left: 0
+    font-size: 1em
+
+#suite
+  .tools
+    @extend .mui-row
+    margin-top: 2em
+  .tool
+    @extend .mui-col-md-4
+    @extend .mui--divider-right
+    text-align: center
+    &:last-child
+      border-right: none
+  .tool img
+    width: 80%
+  .tool p, .tool li
+    text-align: left
+  .tool h3
+    font-weight: bold
+
+  .section-footer
+    background-color: $mui-primary-color
+    text-align: center
+    color: $mui-text-light
+    padding: .5em
+    margin-bottom: 3em
+    h2
+      margin: 0
+
+#team
+  .team-member
+    @extend .mui-col-md-4
+    text-align: center
+    margin-bottom: 1em
+
+  .team-member__info
+    height: 5em
+    vertical-align: bottom
+    &-empty
+      padding: 1.5em 0 0
+
+  h3, h4
+    margin: 0
+    line-height: 1.2
+  h4
+    font-style: italic
+  img
+    width: 80%
+
+
+
+
