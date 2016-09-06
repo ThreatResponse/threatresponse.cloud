@@ -4,4 +4,4 @@ For local development run:
 
 For gh-pages deploy run:
 
-`rake build && rake deploy`
+`rake build && bundle exec rake publish`
