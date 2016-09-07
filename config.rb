@@ -7,8 +7,10 @@ configure :development do
   end
 end
 
+activate :rouge_syntax, :css_class => '.highlight', :line_numbers => false
 
-
+set :markdown_engine, :redcarpet
+set :markdown, :fenced_code_blocks => true, :smartypants => true
 ###
 # Compass
 ###
@@ -94,6 +96,3 @@ configure :build do
   # Or use a different image path
   # set :http_path, "/Content/images/"
 end
-
-set :markdown_engine, :redcarpet
-set :markdown, :fenced_code_blocks => true, :smartypants => true

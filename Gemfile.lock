@@ -229,6 +229,10 @@ GEM
       em-websocket (~> 0.5.1)
       middleman-core (>= 3.3)
       rack-livereload (~> 0.3.15)
+    middleman-rouge (0.0.1)
+      middleman-core (>= 3.0.0)
+      redcarpet (>= 2.2.0)
+      rouge (>= 0.3.0)
     middleman-s3_sync (3.3.7)
       ansi (~> 1.5.0)
       fog-aws (>= 0.7.0)
@@ -277,6 +281,7 @@ GEM
       nokogiri (>= 1.4.1)
       trollop
     redcarpet (3.3.4)
+    rouge (2.0.5)
     ruby-progressbar (1.7.5)
     sass (3.4.22)
     sprockets (2.12.4)
@@ -317,6 +322,7 @@ DEPENDENCIES
   middleman-dotenv
   middleman-gh-pages
   middleman-livereload
+  middleman-rouge
   middleman-s3_sync
   middleman-sync
   redcarpet (~> 3.3, >= 3.3.3)
