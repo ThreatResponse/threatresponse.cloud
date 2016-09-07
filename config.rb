@@ -85,8 +85,9 @@ configure :build do
   # First: gem install middleman-smusher
   # require "middleman-smusher"
   # activate :smusher
-  activate :relative_assets
-  set :relative_links, true
+   activate :relative_assets
+
+   set :relative_links, true
   # Or use a different image path
   # set :http_path, "/Content/images/"
 end
