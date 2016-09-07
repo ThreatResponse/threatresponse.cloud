@@ -2,8 +2,6 @@
 title: Defense Against the Dark Arts Series Part 1
 date: 2016-09-07 05:10 UTC
 tags: grzelak security web amazon defense cloud
-author: Andrew Krug
-published: true
 ---
 
 # Defense Against the Dark Arts Series
