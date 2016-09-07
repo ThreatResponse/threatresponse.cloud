@@ -1,12 +1,13 @@
 configure :development do
   activate :dotenv
   activate :livereload
+  activate :blog do |blog|
+    blog.prefix = "blog"
+    blog.permalink = "{year}/{title}.html"
+  end
 end
 
-activate :blog do |blog|
-  blog.prefix = "blog"
-  blog.permalink = "{year}/{title}.html"
-end
+
 
 ###
 # Compass
@@ -68,7 +69,10 @@ end
 
 # Build-specific configuration
 configure :build do
-
+  activate :blog do |blog|
+    blog.prefix = "blog"
+    blog.permalink = "{year}/{title}.html"
+  end
   # For example, change the Compass output style for deployment
   # activate :minify_css
 
