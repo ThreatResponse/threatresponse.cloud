@@ -77,14 +77,14 @@ CloudWatch Events can fire within 2-4 minutes of an event occurring.
 
 __How do we setup a CloudWatch Event to check for CloudTrail Disable?__
 
-![cloudwatch](2016-09-07-defense_against_the_dark_arts_pt1/cloudwatch.png)
+![cloudwatch](2016-09-06-defense_against_the_dark_arts_pt1/cloudwatch.png)
 > As you can see in the above shot simply setting up a CloudWatch event is quite simple
 to monitor the start and stop of CloudTrail as a service.  
 
 __The Last CloudTrail Event__
 
 The act of disabling itself also produces an event sort of as a last in CloudTrail.
-![cloudwatch](2016-09-07-defense_against_the_dark_arts_pt1/stoplogging.png)
+![cloudwatch](2016-09-06-defense_against_the_dark_arts_pt1/stoplogging.png)
 
 So forensically we know that this type of activity is detectable and has some artifacts.  However, in order to really be effective and monitor disabling for every region in the account we need to set up this kind of CloudWatch event for each region or use a 3rd party monitoring service.  
 
@@ -101,7 +101,7 @@ We can do a couple different things as a means of responding to this type of act
 
 __How it works.__
 
-![cloudwatch-events](2016-09-07-defense_against_the_dark_arts_pt1/cloudwatch-cloudtrail.png)
+![cloudwatch-events](2016-09-06-defense_against_the_dark_arts_pt1/cloudwatch-cloudtrail.png)
 
 > In the diagram above we see that all the usual services are feeding CloudTrail data.  CloudWatch
 events is monitoring that dataflow to see if the CloudTrails are stopped.  If CloudTrail is stopped a
@@ -221,7 +221,7 @@ def lambda_handler(event, context):
 
 Step 3. Finally set up the CloudWatch Event to Trigger this Lambda to run each time CloudTrail is interrupted.  
 
-![cloudwatch-events](2016-09-07-defense_against_the_dark_arts_pt1/restore-cloudtrail.png)
+![cloudwatch-events](2016-09-06-defense_against_the_dark_arts_pt1/restore-cloudtrail.png)
 
 > This is the Amazon CloudWatch Events method of response to basic logging disruption.  
 
