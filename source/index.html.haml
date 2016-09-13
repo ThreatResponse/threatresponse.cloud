@@ -11,13 +11,14 @@
             = link_to 'Network World Article', 'http://www.networkworld.com/article/3106729/security/four-free-tools-for-handling-amazon-web-services-security-incident-response.html'
           %li
             = link_to 'Dark Reading Article', 'http://www.darkreading.com/cloud/6-things-to-know-for-securing-amazon-web-services/d/d-id/1326595'
-          -blog.articles[0...3].each do |article|
-            %li
-              =link_to article.title, article.url
+
           %li
             =link_to 'Whitepaper', 'https://s3-us-west-2.amazonaws.com/threatresponse-static/us-16-Krug-Hardening-AWS-Environments-and-Automating-Incident-Response-for-AWS-Compromises-wp.pdf'
 
-
+        %h3 Blog Articles
+        -blog.articles[0...3].each do |article|
+          %li
+            =link_to article.title, article.url
 
 
 
@@ -31,7 +32,9 @@
         =image_tag 'aws_ir.png'
         %h3 AWS_IR CLI
         %p
-          AWS_IR automates your incident response with zero security preparedness assumptions. It can handle key and host compromises and collects all pertinate data in an S3 bucket along with the ThreatResponse Web workstation.
+          AWS_IR automates your incident response with zero security preparedness assumptions.
+          It can handle key and host compromises and collects all pertinate data in an S3 bucket along with the ThreatResponse Web workstation.
+          =link_to("Read the Docs", "https://aws-ir.readthedocs.io/en/latest/")
 
       .tool
         =image_tag 'tr_web.png'
@@ -48,6 +51,7 @@
             %li Identify the running kernel
             %li Load the appropriate module from the ThreatResponse kernel module warehouse
             %li Acquire the memory by streaming to an S3 bucket using multi-part upload over ssh
+          =link_to("Read the Docs", "https://margaritashotgun.readthedocs.io/en/latest/")
 
     .section-footer
       %h2 Three Projects: One Goal
