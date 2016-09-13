@@ -3,7 +3,7 @@ title: Defense Against the Dark Arts Series Part 2
 date: 2016-09-07 05:10 UTC
 tags: grzelak security web amazon defense cloud
 blog: "blog"
-published: false
+published: true
 ---
 
 # Defense Against the Dark Arts Series
