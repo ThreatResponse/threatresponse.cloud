@@ -10,7 +10,7 @@ published: true
 
 __By: Alex McCormack [@amccormack](https://twitter.com/amccormack)__
 
-I recently cleaned up the README for [ThreatPrep][threatprep], adding better installation instructions, explanations of code, and an example IAM policy users could use to run the tool. I quickly made the policy by copying the ReadOnlyAccess policy (arn:aws:iam::aws:policy/ReadOnlyAccess) and then stripping obvious actions that belonged to services ThreatPrep didn't need. The resulting policy worked, but it still felt too permissive, so I spent some time today narrowing it down as much as I could.  You can see the before and after in the image below:
+I recently cleaned up the README for [ThreatPrep][threatprep], adding better installation instructions, explanations of code, and an example IAM policy users could use to run the tool. I quickly made the policy by copying the ReadOnlyAccess policy (arn:aws:iam::aws:policy/ReadOnlyAccess) and then stripping obvious actions that belonged to services ThreatPrep didn't need. The resulting policy worked, but it still felt [too permissive][hammond], so I spent some time today narrowing it down as much as I could.  You can see the before and after in the image below:
 
 ![Permission Compare](/blog/2016-09-13-tips_for_least_privilege_iam_policies/comparison2.png)
 
@@ -31,16 +31,17 @@ Just like code, policies are a lot easier to maintain and troubleshoot when they
 
 After combining the actions into a single statement, I copied the block of actions into a text file and sorted it using the `sort` command in Linux.
 
+If you compare the two policies above, you'll note that the one on the right is much easier to read. Not only does reducing the statements cut out the clutter of extra curly braces, but combining and sorting makes it much easier to notice an action that doesn't belong.
 
 ## 2. Avoid Wildcards in Actions.<a name="wildcards"></a>
 
-The first iteration of the policy used the action `ec2:Describe*`. But it turns out, there are more than 62 actions that currently match this wildcard. Enumerating the actions you actually need not only makes it easier to determine the explicit Actions granted, but it also prevents an accidental permission grant if Amazon were to add another action matching the `ec2:Describe*` name.
+The first iteration of the policy used the action `ec2:Describe*`. But it turns out, there are more than 62 actions that currently match this wildcard. Enumerating the actions you actually need instead of using a wildcard not only makes it easier to determine the explicit Actions granted, but it also prevents an accidental permission grant if Amazon were to add another action matching the `ec2:Describe*` name.
 
 However, there is currently [a limit of 5,120 characters][iam_policy_limit] for a managed policy. If you are running into this limit, using the wildcard to reduce space makes sense.
 
 ## 3. Use a Temporary Test User.<a name="testuser"></a>
 
-When crafting a new policy for a tool, it can get confusing if you don't create a separate user to test against. First, you want a user that has only the allowed actions specified in the policy, and not actions granted by other policies, or actions denied by other policies to affect your testing. Having a test user will also make it easier to utilize Access Advisor or to check our CloudTrail logs.
+When crafting a new policy for a tool, it can get confusing if you don't create a separate user to test against. First, you want a user that has only the allowed actions specified in the policy. You don't want actions granted or denied by other policies to affect your testing. Having a test user will also make it easier to utilize Access Advisor or to check our CloudTrail logs.
 
 Finally, creating a test user doesn't do any good if you don't actually use the credentials for that user when running the test. Using docker is an easy way to isolate accounts, though you may also be able to use [named profiles](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-multiple-profiles).
 
@@ -106,9 +107,16 @@ We could see the following were not used:
  - s3:ListAllMyBuckets
  - cloudtrail:GetTrailStatus
 
-However, this method isn't fool proof. After all, we are comparing APIs being called to actions allowed in a policy statement. And while these match pretty closely, they aren't necessarily 1-to-1.  If I remove the `cloudtrail:GetTrailStatus` action, ThreatPrep runs just fine, but `s3:ListAllMyBuckets` is still needed. This is because `s3:ListAllMyBuckets` is allowing an action, even though there isn't actually a specific API that aligns to it.  Even so, querying the API can be really useful, especially when swapping out wildcards for enumerated actions.
+However, this method isn't fool proof. After all, we are comparing APIs being called to actions allowed in a policy statement. And while these match pretty closely, they aren't necessarily 1-to-1.  If I remove the `cloudtrail:GetTrailStatus` action, ThreatPrep runs just fine. But `s3:ListAllMyBuckets` is still needed. This is because `s3:ListAllMyBuckets` is allowing an action, even though there isn't actually a specific API that aligns to it.  Even so, querying the API can be really useful, especially when swapping out wildcards for enumerated actions.
 
-# References <a name="references"></a>
+# Putting It All Together
+
+With all the intricacies of IAM Policies, its easy to grab a managed policy and use it without taking a hard look at whether or not the policy is too permissive. And if you're like me, once you get a policy that works, you don't often go back and check on them to make sure they are as tight as they could be. But with the tips outlined above, you can ensure your policies are as tight as possible.
+
+Finally, when it comes to ThreatPrep, keeping the `Resource` of the section wide open with a `*` is necessary for the tool, but other tools may have more appropriate policies that are tied to a specific resource or tag. For more information on locking down the `Resource` section, checkout the the SEC305 talk linked in the References section.
+
+
+# References & Further Reading <a name="references"></a>
 
  - AWS re:Invent 2015 | (SEC305) How to Become an IAM Policy Ninja in 60 Minutes or Less
     - [Video][sec305_video]
@@ -117,9 +125,10 @@ However, this method isn't fool proof. After all, we are comparing APIs being ca
 Remove Unnecessary Permissions in Your IAM Policies by Using Service Last Accessed Data][aws_blog_removed_unnecessary_permissions]
  - [IAM User Guide][iam_user_guide]
  - [jq command-line JSON processor][jq]
- - [Eric Hammond - Alestic.com - AWS IAM "ReadOnlyAccess" Managed Policy Is Too Permissive (For Us)](https://alestic.com/2015/10/aws-iam-readonly-too-permissive/)
+ - [Eric Hammond - Alestic.com - AWS IAM "ReadOnlyAccess" Managed Policy Is Too Permissive (For Us)][hammond]
 
 
+[hammond]: https://alestic.com/2015/10/aws-iam-readonly-too-permissive/
 [threatprep]: https://github.com/ThreatResponse/ThreatPrep
 [jq]: https://stedolan.github.io/jq/
 [iam_policy_limit]: http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_iam-limits.html
