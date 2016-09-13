@@ -1,6 +1,6 @@
 ---
 title: Tips For Least Privilege IAM Policies
-date: 2016-09-13 06:45 UTC
+date: 2016-09-12 06:45 UTC
 tags: security web amazon iam policy
 blog: "blog"
 published: true
@@ -12,7 +12,7 @@ __By: Alex McCormack [@amccormack](https://twitter.com/amccormack)__
 
 I recently cleaned up the README for [ThreatPrep][threatprep], adding better installation instructions, explanations of code, and an example IAM policy users could use to run the tool. I quickly made the policy by copying the ReadOnlyAccess policy (arn:aws:iam::aws:policy/ReadOnlyAccess) and then stripping obvious actions that belonged to services ThreatPrep didn't need. The resulting policy worked, but it still felt [too permissive][hammond], so I spent some time today narrowing it down as much as I could.  You can see the before and after in the image below:
 
-![Permission Compare](/blog/2016-09-13-tips_for_least_privilege_iam_policies/comparison2.png)
+![Permission Compare](2016-09-13-tips_for_least_privilege_iam_policies/comparison2.png)
 
 Tailoring the policy took a bit of time, but I discovered a few tips that might make crafting the next policy a bit easier.
 
@@ -49,7 +49,7 @@ Finally, creating a test user doesn't do any good if you don't actually use the 
 
 When I started looking to narrow the policy, the first place I checked was Access Advisor.
 
-![Access Advisor](/blog/2016-09-13-tips_for_least_privilege_iam_policies/access_advisor_policy.png)
+![Access Advisor](2016-09-13-tips_for_least_privilege_iam_policies/access_advisor_policy.png)
 
 Access Advisor shows the services that a user is granted permission to, and when that service was last accessed by that user. But be aware, AWS states that **recent activity usually appears within 4 hours**, so it may take some time before you can audit using this tool.
 
