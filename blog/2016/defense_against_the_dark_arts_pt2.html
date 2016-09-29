@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <title>ThreatResponse</title>
+    <meta name="description" content="ThreatResponse Toolkit for Incident Response on AWS">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32-9d2a9a6c.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96-49a911cd.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16-bc391822.png">
+
+    <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css" />
+    <link href="../../stylesheets/solarized-6b9016ec.css" rel="stylesheet" />
+    <link href="../../stylesheets/screen-0be994a6.css" rel="stylesheet" />
+
+  </head>
+
+  <body>
+
+    <header>
+  <div class='mui-container'>
+    <table>
+      <tr>
+        <td>
+          <a href="/"><img src="../../images/threatresponse_logo-8654b023.png" /></a>
+        </td>
+        <td>
+          <ul>
+            <li>
+              <a href='https://github.com/ThreatResponse'>Github</a>
+            </li>
+            <li>
+              <a href='/blog.html'>Blog</a>
+            </li>
+            <!-- %li -->
+            <!-- %a{href: "#"} Documentation -->
+            <li>
+              <a href='#contact'>Contact</a>
+            </li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+  </div>
+</header>
+
+    <div class="mui--appbar-height"></div>
+    <div id="content-wrapper" class="mui-container">
+      <h1>Defense Against the Dark Arts Series</h1>
+
+<p><strong>By: Andrew Krug @andrewkrug</strong></p>
+
+<p><strong>Part 2</strong></p>
+
+<p>In our last post we looked at basic defense against a &ldquo;stop logging&rdquo; attack
+which we can all agree is a best case scenario.  Stop logging attacks are not
+sophisticated or difficult to detect or mitigate.  <em>What if the attack was slightly
+more sophisticated?</em>
+A patient and thoughtful attacker is much more difficult to detect inside of a large complex environment.  </p>
+
+<h3>Stopping Logging without Stopping Logging</h3>
+
+<p>In the same post we mentioned in the last article titled : &ldquo;Disrupting AWS Logging&rdquo; https://danielgrzelak.com/disrupting-aws-logging-a42e437d6594#.2m18u72vu by Daniel Grzelak
+a method of disabling only <em>global logging</em> is mentioned.  To understand that let&rsquo;s define global logging.</p>
+
+<p><strong>Global Logging</strong></p>
+
+<p><img alt="global-services" src="defense_against_the_dark_arts_pt2/global-services-b5b2d269.png" /></p>
+
+<p>Global logging can be defined as CloudTrail events for the services that aren&rsquo;t region specific within Amazon Web Services
+like Security Token Service or IAM Console access.  </p>
+
+<p>In terms of importance I would rank global logging a high value target
+when deciding what to disable first.  If you find a way to quietly disable global logging
+you can then perform all kinds of privilege escalation while all of the monitoring systems
+continue to receive regular CloudTrail events for <em>non-global</em> operations.  <strong>This might
+even be sufficient to fool anomaly detection systems.</strong></p>
+
+<h3>Response to Global Logging Disable</h3>
+
+<p>We can use CloudWatch events in a similar way to defend against this type of attack.  Instead of only
+triggering CloudWatch events on the &ldquo;StopTrail&rdquo; event
+we will also configure CloudWatch to fire the same Lambda function on &ldquo;UpdateTrail&rdquo; as disabling global
+logging is an &ldquo;Update&rdquo; operation.</p>
+
+<p>You might have noticed a snippet of code as well in the Lambda function we provided in our Github repository for the series.  https://github.com/ThreatResponse/defense-against-the-dark-arts/tree/master/part-1/cloudwatch-restore-cloudtrail</p>
+<pre class="highlight python"><code>
+<span class="c">#NOTE: THE ENTIRE LAMBDA THIS IS ABBREVIATED</span>
+<span class="c">#DON'T JUST TRY TO USE THIS</span>
+
+<span class="c">#First in the object constructor we pull in all of the TrailARN attributes.</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get_trail_status</span><span class="p">(</span>
+    <span class="n">Name</span><span class="o">=</span><span class="n">trailArn</span>
+<span class="p">)</span>
+
+<span class="c">#Parse the trail dictionary to check to see if Global Service Events are included.</span>
+<span class="k">def</span> <span class="nf">globalEventsActive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">[</span><span class="n">IncludeGlobalServiceEvents</span><span class="p">]</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+<span class="c">#If they aren't included then we "updateTrail" to include the new attribute.</span>
+<span class="k">def</span> <span class="nf">globalLogging</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">update_trail</span><span class="p">(</span>
+        <span class="n">Name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">arn</span><span class="p">,</span>
+        <span class="n">IncludeGlobalServiceEvents</span><span class="o">=</span><span class="bp">True</span>
+    <span class="p">)</span>
+
+
+</code></pre>
+<blockquote>
+<p>So if you followed along in Part 1 of the series all you needed to do was update your CloudWatch event to run our &ldquo;return to known good state&rdquo; lambda function on UpdateTrail API Calls.</p>
+</blockquote>
+
+<h3>More Awesome Logging Disruption</h3>
+
+<p>As a hacker one of my person favorite hacks is the type that occurs when a
+technology that is designed to improve security is used as an offensive mechanism. Maybe it&rsquo;s because I love clever people.  Hackers are clever people.
+Therefore I love hackers.  </p>
+
+<p>This attack pattern uses <em>encryption</em> against the victim in an unexpected way.
+Once again if you&rsquo;d like to learn to execute this attack Daniel&rsquo;s blog is well worth a read on the topic at hand. https://danielgrzelak.com/disrupting-aws-logging-a42e437d6594#.2m18u72vu</p>
+
+<p>Effectively this can be summarized as an attack that keeps CloudTrail active but breaks the very foundation of it&rsquo;s ability to operate within AWS.  So StopTrail is never actually run against the API.  UpdateTrail is run however.  So all of the aforementioned detection mechanisms apply.</p>
+
+<p>Look for the next blog post where we&rsquo;ll look at:</p>
+
+<ul>
+<li>Bucket based attacks</li>
+<li>Encryption key revocation</li>
+<li>S3 LifeCycle Policy Attacks</li>
+</ul>
+
+    </div>
+    <footer>
+  <div class='mui-container mui--text-center'></div>
+  <hr></hr>
+</footer>
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="../../javascripts/plugins-336f429e.js"></script>
+
+    <!-- put your analytics here -->
+  </body>
+</html>

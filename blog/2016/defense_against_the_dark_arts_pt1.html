@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <title>ThreatResponse</title>
+    <meta name="description" content="ThreatResponse Toolkit for Incident Response on AWS">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32-9d2a9a6c.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96-49a911cd.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16-bc391822.png">
+
+    <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css" />
+    <link href="../../stylesheets/solarized-6b9016ec.css" rel="stylesheet" />
+    <link href="../../stylesheets/screen-0be994a6.css" rel="stylesheet" />
+
+  </head>
+
+  <body>
+
+    <header>
+  <div class='mui-container'>
+    <table>
+      <tr>
+        <td>
+          <a href="/"><img src="../../images/threatresponse_logo-8654b023.png" /></a>
+        </td>
+        <td>
+          <ul>
+            <li>
+              <a href='https://github.com/ThreatResponse'>Github</a>
+            </li>
+            <li>
+              <a href='/blog.html'>Blog</a>
+            </li>
+            <!-- %li -->
+            <!-- %a{href: "#"} Documentation -->
+            <li>
+              <a href='#contact'>Contact</a>
+            </li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+  </div>
+</header>
+
+    <div class="mui--appbar-height"></div>
+    <div id="content-wrapper" class="mui-container">
+      <h1>Defense Against the Dark Arts Series</h1>
+
+<p><strong>By: Andrew Krug @andrewkrug</strong></p>
+
+<p><strong>Part 1</strong></p>
+
+<p>This has been a really great year for analysis of Cloud Security on Amazon.
+As part of presenting the ThreatResponse tool kit the team and I have been
+out seeing all of the best talks on the security scene and getting hands on
+with some very clever attack patterns.  This series of blog articles beginning
+today and culminating in our DerbyCon talk will explore those clever attack patterns
+in some detail and present workarounds for dealing with these types of attacks
+in a live environment.  </p>
+
+<h3>Just what are these attacks?</h3>
+
+<p>What are the scariest attacks of summer for Amazon Web Services users?  They
+mainly boil down to persistence methods for maintaining control of an AWS account
+well beyond disabling a compromised access key.  At BlackHat USA 2016 we heard from
+Dan Amiga and Dor Knafo in their talk, Account Jumping Post Infection Persistency &amp; Lateral Movement in AWS.</p>
+
+<p>This presentation focused on two major areas:</p>
+
+<ul>
+<li>Evasion : How do I stay undetected?</li>
+<li>Persistence : How do I maintain access after my initial foot hold is compromised?</li>
+</ul>
+
+<p>This was of particular interest to us as an incident response and threat mitigation project due to the fact that we were unsure that our tool suite <em>ThreatResponse</em> addressed all these varietals of attack pattern.</p>
+
+<h3>Evasion in the Cloud</h3>
+
+<p>When we talk about evasion techniques in Amazon Web Services we get to the true spirit
+of the hacker and what really is a <em>hack</em>.  All of the evasion techniques we saw exploited
+something in the Amazon Web Services API that was just a <strong>feature</strong> to remain undetected
+or alter evidence.  </p>
+
+<p><strong>Disclaimer</strong></p>
+
+<blockquote>
+<p>It is important to point out that all of these evasion techniques require a very high level of access to take place inside of your account.  This further illustrates that there is really no substitute for concepts like separation of responsibility and least privilege computing.  </p>
+</blockquote>
+
+<p>An Australian Security Researcher by the name of Daniel Grzelak who maitains a blog
+called CyberFree https://danielgrzelak.com was the first to present some of these
+techniques in blogs earlier in 2016.  </p>
+
+<h4>Understanding Logging in Amazon</h4>
+
+<p>Any Cloud Security professional that has been around will tell you, &ldquo;The value of
+CloudTrail logs can not be understated.&rdquo;  What information is stored in a CloudTrail log?
+All of the calls to the API and actions taken over time.  This is incredibly valuable
+when it comes time to perform timeline reconstruction on a compromised AWS account.  Without CloudTrail it becomes an arduous task to determine the scope of the incursion.  So you can imagine as an attacker how awesome it would be to destroy this data or cause
+logging to not take place when you don&rsquo;t want it to.</p>
+
+<h4>Evasion Technique 1 - Disrupting Logging ( Simple )</h4>
+
+<p>We don&rsquo;t need to show you how to perform this attack.  Mr. Grzelak does a fine job of that here.
+https://danielgrzelak.com/disrupting-aws-logging-a42e437d6594#.2m18u72vu In short this attack simply boils down to stopping logging in all or some regions of the AWS account.  </p>
+
+<blockquote>
+<p>What does all or one region really mean?  In Amazon Web Services CloudTrail logs are sent to a &ldquo;home region&rdquo;.  In order to consolidate these from multiple regions you need to have all regions log back to a central bucket via a feature called multi-region logging.  So a stealthy attacker may only elect to disable one region at a time.</p>
+</blockquote>
+
+<p><strong>What are the forensic artifacts produced by this?</strong></p>
+
+<p>As incident responders in the Cloud we are interested in how might detect this behavior.  Simply disabling CloudTrail is relatively noisy and can be detected with the following:</p>
+
+<ol>
+<li>CloudWatch Events</li>
+<li>Config Rules</li>
+</ol>
+
+<p>Both of these however actually use CloudTrail as the mechanism for detecting when CloudTrail is stopped. CloudWatch events will probably be the fast of the two since Config Rules takes time to perform and evaluation and for that to make it back into the logs.</p>
+
+<p>CloudWatch Events can fire within 2-4 minutes of an event occurring.  </p>
+
+<p><strong>How do we setup a CloudWatch Event to check for CloudTrail Disable?</strong></p>
+
+<p><img alt="cloudwatch" src="defense_against_the_dark_arts_pt1/cloudwatch-920535a6.png" /></p>
+
+<blockquote>
+<p>As you can see in the above shot simply setting up a CloudWatch event is quite simple
+to monitor the start and stop of CloudTrail as a service.  </p>
+</blockquote>
+
+<p><strong>The Last CloudTrail Event</strong></p>
+
+<p>The act of disabling itself also produces an event sort of as a last in CloudTrail.
+<img alt="cloudwatch" src="defense_against_the_dark_arts_pt1/stoplogging-28584cca.png" /></p>
+
+<p>So forensically we know that this type of activity is detectable and has some artifacts.  However, in order to really be effective and monitor disabling for every region in the account we need to set up this kind of CloudWatch event for each region or use a 3rd party monitoring service.  </p>
+
+<h3>Response to Evasion Technique 1 - Disrupting Logging ( Simple )</h3>
+
+<p>Now simply stopping the log is a rather noisy activity so it&rsquo;s very easy to detect and respond to. Even @danielgrzelak says, &ldquo;Your target may be actively monitoring both of those API calls so those tactics are probably best left to nights of drunken regret and forcefully purged with tequila.&rdquo;</p>
+
+<p>We can do a couple different things as a means of responding to this type of activity.  </p>
+
+<ol>
+<li>Chain CloudWatch events to a Lambda function to re-enable logging to a known good state.</li>
+<li>Use a 3rd party tool to monitor the AWS account either on premise or in a &ldquo;Security Cloud&rdquo; to put the account back to a known good state.<br></li>
+</ol>
+
+<blockquote>
+<p>In this sense &ldquo;Security Cloud&rdquo; is defined as another AWS account with separate security boundaries receiving logs from the organizations accounts running workloads.  </p>
+</blockquote>
+
+<p><strong>How it works.</strong></p>
+
+<p><img alt="cloudwatch-events" src="defense_against_the_dark_arts_pt1/cloudwatch-cloudtrail-d803c9e8.png" /></p>
+
+<blockquote>
+<p>In the diagram above we see that all the usual services are feeding CloudTrail data.  CloudWatch
+events is monitoring that dataflow to see if the CloudTrails are stopped.  If CloudTrail is stopped a
+serverless Lambda function is then fired to restore the CloudTrail configuration to a known good state.</p>
+</blockquote>
+
+<p><strong>How to set it up</strong></p>
+
+<p>Step 1.  Set up the execution role for the Lambda Function.</p>
+
+<blockquote>
+<p>Execution roles in AWS allow &ldquo;service account&rdquo; style functionality for servers or Lambdas</p>
+</blockquote>
+
+<p>The example version of this policy is posted here:</p>
+
+<p>https://github.com/ThreatResponse/defense-against-the-dark-arts/tree/master/part-1/cloudwatch-restore-cloudtrail</p>
+
+<p>Just to break it down all this policy does is allow Lambda to interact with your CloudTrails.</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"cloudtrail:DescribeTrails"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"cloudtrail:GetTrailStatus"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"cloudtrail:StartLogging"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nt">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"logs:CreateLogGroup"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"logs:CreateLogStream"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"logs:PutLogEvents"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nt">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"*"</span><span class="w">
+            </span><span class="p">]</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>Step 2. - Create the Lambda Function</p>
+
+<p>Next we want to create the Lambda Function that uses that role to execute.  Everything can pretty much remain default with the exception of this role.  Be sure you don&rsquo;t accidentally associate it with a VPC.</p>
+
+<blockquote>
+<p>Pro Tip : Lambdas can talk with AWS APIs without being in a VPC.</p>
+</blockquote>
+<pre class="highlight python"><code><span class="kn">import</span> <span class="nn">boto3</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="k">class</span> <span class="nc">CloudTrail</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trailArn</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s">'cloudtrail'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arn</span> <span class="o">=</span> <span class="n">trailArn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get_trail_status</span><span class="p">(</span>
+            <span class="n">Name</span><span class="o">=</span><span class="n">trailArn</span>
+        <span class="p">)</span>
+
+    <span class="s">"""Check to see if Global Events are Active"""</span>
+    <span class="k">def</span> <span class="nf">globalEventsActive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">[</span><span class="n">IncludeGlobalServiceEvents</span><span class="p">]</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+    <span class="s">"""Restart Logging on Trail ARN"""</span>
+    <span class="k">def</span> <span class="nf">EnableTrail</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">start_logging</span><span class="p">(</span>
+                <span class="n">Name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">arn</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+    <span class="s">"""Check to see if CloudTrail is Logging"""</span>
+    <span class="k">def</span> <span class="nf">isLogging</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">[</span><span class="s">'IsLogging'</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+    <span class="s">""" Re-enable sending GlobalEvents to the Log"""</span>
+    <span class="k">def</span> <span class="nf">globalLogging</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">update_trail</span><span class="p">(</span>
+            <span class="n">Name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">arn</span><span class="p">,</span>
+            <span class="n">IncludeGlobalServiceEvents</span><span class="o">=</span><span class="bp">True</span>
+        <span class="p">)</span>
+
+<span class="s">"""
+If CloudTrail is already enabled for all regions
+do nothing otherwise restore CloudTrail to
+a known good state based on a number of assumptions.
+"""</span>
+<span class="k">def</span> <span class="nf">lambda_handler</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="k">print</span> <span class="n">event</span>
+    <span class="s">"""Strip trail Amazon ARN from Event"""</span>
+    <span class="n">trailArn</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">'detail'</span><span class="p">][</span><span class="s">'requestParameters'</span><span class="p">][</span><span class="s">'name'</span><span class="p">]</span>
+
+    <span class="s">"""Instantiate CloudTrail Object"""</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">CloudTrail</span><span class="p">(</span><span class="n">trailArn</span><span class="p">)</span>
+
+    <span class="s">"""Enter an infinite loop waiting to return to known good state"""</span>
+    <span class="k">while</span> <span class="n">c</span><span class="o">.</span><span class="n">isLogging</span><span class="p">()</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">EnableTrail</span><span class="p">()</span>
+
+    <span class="s">"""Fix Global Event Logging"""</span>
+    <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">globalEventsActive</span><span class="p">()</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">globalLogging</span><span class="p">()</span>
+
+</code></pre>
+<p>Step 3. Finally set up the CloudWatch Event to Trigger this Lambda to run each time CloudTrail is interrupted.  </p>
+
+<p><img alt="cloudwatch-events" src="defense_against_the_dark_arts_pt1/restore-cloudtrail-40c052bc.png" /></p>
+
+<blockquote>
+<p>This is the Amazon CloudWatch Events method of response to basic logging disruption.  </p>
+</blockquote>
+
+<p>Keep an eye out for the next post in the series on Defense Against the Dark Arts for the Cloud where we&rsquo;ll look at the difference between local and global service delivery in addition to encrypting your logs against KMS keys.</p>
+
+    </div>
+    <footer>
+  <div class='mui-container mui--text-center'></div>
+  <hr></hr>
+</footer>
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="../../javascripts/plugins-336f429e.js"></script>
+
+    <!-- put your analytics here -->
+  </body>
+</html>
