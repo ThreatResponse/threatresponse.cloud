@@ -12,6 +12,9 @@ activate :rouge_syntax, :css_class => '.highlight', :line_numbers => false
 set :markdown_engine, :redcarpet
 set :markdown, :fenced_code_blocks => true, :smartypants => true
 
+
+#page "/derbycon", :layout => false
+
 #redirect "/derbycon", to: "http://threatresponse-derbycon.s3-website-us-west-2.amazonaws.com/"
 ###
 # Compass
@@ -35,9 +38,9 @@ set :markdown, :fenced_code_blocks => true, :smartypants => true
 # page "/path/to/file.html", :layout => :otherlayout
 #
 # A path which all have the same layout
-# with_layout :admin do
-#   page "/admin/*"
-# end
+with_layout :layout do
+   page "/derbycon/*"
+end
 
 # Proxy (fake) files
 # page "/this-page-has-no-template.html", :proxy => "/template-file.html" do
