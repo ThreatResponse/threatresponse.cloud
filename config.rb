@@ -12,7 +12,7 @@ activate :rouge_syntax, :css_class => '.highlight', :line_numbers => false
 set :markdown_engine, :redcarpet
 set :markdown, :fenced_code_blocks => true, :smartypants => true
 
-redirect "/derbycon", to: "http://threatresponse-derbycon.s3-website-us-west-2.amazonaws.com/"
+#redirect "/derbycon", to: "http://threatresponse-derbycon.s3-website-us-west-2.amazonaws.com/"
 ###
 # Compass
 ###
