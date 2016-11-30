@@ -1,6 +1,6 @@
 ---
-title: ThreatResponse at re: Invent
-date: 2016-09-30 06:45 UTC
+title: "ThreatResponse at re:Invent"
+date: 2016-11-29 06:45 UTC
 tags: amazon web service reinvent
 blog: "blog"
 published: true
@@ -28,7 +28,7 @@ I made a point to attend the _Security Jam_ a security simulation exercise where
 
 _A big surprise_ !
 
-![marhso-sirs](2016-11-30-threatresponse_at_reinvent/marsho.png)
+![marhso-sirs](2016-11-29-threatresponse_at_reinvent/marsho.png)
 
 A ThreatResponse tool was featured in one of the CTF Challenges.  We were so excited!  Special thanks to the challenge designer.
 
@@ -46,7 +46,7 @@ https://www.youtube.com/watch?v=SfmEsjhmYVg&feature=youtu.be
 
 We got another big surprise and huge compliment being mentioned as a "Cool" project in SEC313.  
 
-![beetle](2016-11-30-threatresponse_at_reinvent/beetle.jpg)
+![beetle](2016-11-29-threatresponse_at_reinvent/beetle.jpg)
 
 ## Conclusion
 
