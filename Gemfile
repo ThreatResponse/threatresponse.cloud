@@ -1,15 +1,11 @@
 source "https://rubygems.org"
 
 gem "middleman"
-# gem "middleman-cloudfront"
 gem "middleman-dotenv"
-# gem "middleman-google-analytics"
 gem "middleman-livereload"
-gem "middleman-sync"
+gem 'middleman-deploy', '~> 2.0.0.pre.alpha'
 gem "middleman-blog"
 gem 'middleman-gh-pages'
 gem 'compass'
-gem 'middleman-s3_sync'
-gem 'redcarpet', '~> 3.3', '>= 3.3.3'
-gem "builder", "~> 3.0"
-gem 'middleman-rouge'
+gem 'redcarpet'
+gem 'builder'
