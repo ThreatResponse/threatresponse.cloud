@@ -14,38 +14,38 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16-bc391822.png">
 
     <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css" />
-    <link href="../../stylesheets/solarized-196ce9fe.css" rel="stylesheet" />
-    <link href="../../stylesheets/screen-06f309cf.css" rel="stylesheet" />
+    <link href="../../stylesheets/solarized-564bde14.css" rel="stylesheet" />
+    <link href="../../stylesheets/screen-66d98874.css" rel="stylesheet" />
 
   </head>
 
   <body>
 
     <header>
-  <div class='mui-container'>
-    <table>
-      <tr>
-        <td>
-          <a href="/"><img src="../../images/threatresponse_logo-8654b023.png" /></a>
-        </td>
-        <td>
-          <ul>
-            <li>
-              <a href='https://github.com/ThreatResponse'>Github</a>
-            </li>
-            <li>
-              <a href='/blog.html'>Blog</a>
-            </li>
-            <!-- %li -->
-            <!-- %a{href: "#"} Documentation -->
-            <li>
-              <a href='#contact'>Contact</a>
-            </li>
-          </ul>
-        </td>
-      </tr>
-    </table>
-  </div>
+<div class='mui-container'>
+<table>
+<tr>
+<td>
+<a href="/"><img src="../../images/threatresponse_logo-8654b023.png" /></a>
+</td>
+<td>
+<ul>
+<li>
+<a href='https://github.com/ThreatResponse'>Github</a>
+</li>
+<li>
+<a href='/blog.html'>Blog</a>
+</li>
+<!-- %li -->
+<!-- %a{href: "#"} Documentation -->
+<li>
+<a href='#contact'>Contact</a>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+</div>
 </header>
 
     <div class="mui--appbar-height"></div>
@@ -107,7 +107,7 @@
 <h2>5. Inspect CloudTrail Logs.<a name="cloudtrail"></a></h2>
 
 <p>If you have CloudTrail set up, and you really should, you can run your application with a more permissive policy, and then audit the EventNames which reveal the APIs being called. In the example below, I created a new user called threatpreppolicytest and then granted that user a more permissive policy. I then downloaded the log files from S3 and filtered out the relevant data with <a href="https://stedolan.github.io/jq/">jq</a>.</p>
-<pre class="highlight plaintext"><code>almac@box ~/Downloads $ cat 114406602329_CloudTrail_us-east-1_20160913* |  \
+<div class="highlight"><pre class="highlight plaintext"><code>almac@box ~/Downloads $ cat 114406602329_CloudTrail_us-east-1_20160913* |  \
   jq -c '.Records[] | { eventName: .eventName, userName: .userIdentity.userName, eventSource: .eventSource }|select(.userName=="threatpreppolicytest")|[.eventSource, .eventName]' | \
   sort | uniq
 ["cloudtrail.amazonaws.com","DescribeTrails"]
@@ -124,9 +124,9 @@
 ["s3.amazonaws.com","GetBucketVersioning"]
 ["s3.amazonaws.com","ListBuckets"]
 
-</code></pre>
+</code></pre></div>
 <p>and comparing that to the policy I had in place:</p>
-<pre class="highlight plaintext"><code>"cloudtrail:DescribeTrails",
+<div class="highlight"><pre class="highlight plaintext"><code>"cloudtrail:DescribeTrails",
 "cloudtrail:GetTrailStatus",
 "cloudwatch:DescribeAlarms",
 "ec2:DescribeFlowLogs",
@@ -141,7 +141,7 @@
 "s3:GetBucketVersioning",
 "s3:ListAllMyBuckets",
 "s3:ListBucket"
-</code></pre>
+</code></pre></div>
 <p>We could see the following were not used:</p>
 
 <ul>
@@ -175,8 +175,8 @@ Remove Unnecessary Permissions in Your IAM Policies by Using Service Last Access
 
     </div>
     <footer>
-  <div class='mui-container mui--text-center'></div>
-  <hr></hr>
+<div class='mui-container mui--text-center'></div>
+<hr></hr>
 </footer>
 
 

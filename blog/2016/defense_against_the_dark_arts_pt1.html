@@ -14,38 +14,38 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16-bc391822.png">
 
     <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css" />
-    <link href="../../stylesheets/solarized-196ce9fe.css" rel="stylesheet" />
-    <link href="../../stylesheets/screen-06f309cf.css" rel="stylesheet" />
+    <link href="../../stylesheets/solarized-564bde14.css" rel="stylesheet" />
+    <link href="../../stylesheets/screen-66d98874.css" rel="stylesheet" />
 
   </head>
 
   <body>
 
     <header>
-  <div class='mui-container'>
-    <table>
-      <tr>
-        <td>
-          <a href="/"><img src="../../images/threatresponse_logo-8654b023.png" /></a>
-        </td>
-        <td>
-          <ul>
-            <li>
-              <a href='https://github.com/ThreatResponse'>Github</a>
-            </li>
-            <li>
-              <a href='/blog.html'>Blog</a>
-            </li>
-            <!-- %li -->
-            <!-- %a{href: "#"} Documentation -->
-            <li>
-              <a href='#contact'>Contact</a>
-            </li>
-          </ul>
-        </td>
-      </tr>
-    </table>
-  </div>
+<div class='mui-container'>
+<table>
+<tr>
+<td>
+<a href="/"><img src="../../images/threatresponse_logo-8654b023.png" /></a>
+</td>
+<td>
+<ul>
+<li>
+<a href='https://github.com/ThreatResponse'>Github</a>
+</li>
+<li>
+<a href='/blog.html'>Blog</a>
+</li>
+<!-- %li -->
+<!-- %a{href: "#"} Documentation -->
+<li>
+<a href='#contact'>Contact</a>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+</div>
 </header>
 
     <div class="mui--appbar-height"></div>
@@ -181,32 +181,32 @@ serverless Lambda function is then fired to restore the CloudTrail configuration
 <p>https://github.com/ThreatResponse/defense-against-the-dark-arts/tree/master/part-1/cloudwatch-restore-cloudtrail</p>
 
 <p>Just to break it down all this policy does is allow Lambda to interact with your CloudTrails.</p>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-    </span><span class="nt">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-        </span><span class="p">{</span><span class="w">
-            </span><span class="nt">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-                </span><span class="s2">"cloudtrail:DescribeTrails"</span><span class="p">,</span><span class="w">
-                </span><span class="s2">"cloudtrail:GetTrailStatus"</span><span class="p">,</span><span class="w">
-                </span><span class="s2">"cloudtrail:StartLogging"</span><span class="w">
-            </span><span class="p">],</span><span class="w">
-            </span><span class="nt">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
-            </span><span class="nt">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="w">
-        </span><span class="p">},</span><span class="w">
-        </span><span class="p">{</span><span class="w">
-            </span><span class="nt">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
-            </span><span class="nt">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-                </span><span class="s2">"logs:CreateLogGroup"</span><span class="p">,</span><span class="w">
-                </span><span class="s2">"logs:CreateLogStream"</span><span class="p">,</span><span class="w">
-                </span><span class="s2">"logs:PutLogEvents"</span><span class="w">
-            </span><span class="p">],</span><span class="w">
-            </span><span class="nt">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-                </span><span class="s2">"*"</span><span class="w">
-            </span><span class="p">]</span><span class="w">
-        </span><span class="p">}</span><span class="w">
-    </span><span class="p">]</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
+<div class="highlight"><pre class="highlight plaintext"><code>{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "cloudtrail:DescribeTrails",
+                "cloudtrail:GetTrailStatus",
+                "cloudtrail:StartLogging"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": [
+                "*"
+            ]
+        }
+    ]
+}
+</code></pre></div>
 <p>Step 2. - Create the Lambda Function</p>
 
 <p>Next we want to create the Lambda Function that uses that role to execute.  Everything can pretty much remain default with the exception of this role.  Be sure you don&rsquo;t accidentally associate it with a VPC.</p>
@@ -214,7 +214,7 @@ serverless Lambda function is then fired to restore the CloudTrail configuration
 <blockquote>
 <p>Pro Tip : Lambdas can talk with AWS APIs without being in a VPC.</p>
 </blockquote>
-<pre class="highlight python"><code><span class="kn">import</span> <span class="nn">boto3</span>
+<div class="highlight"><pre class="highlight python"><code><span class="kn">import</span> <span class="nn">boto3</span>
 <span class="kn">import</span> <span class="nn">json</span>
 
 <span class="k">class</span> <span class="nc">CloudTrail</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -277,7 +277,7 @@ a known good state based on a number of assumptions.
     <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">globalEventsActive</span><span class="p">()</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
         <span class="n">c</span><span class="o">.</span><span class="n">globalLogging</span><span class="p">()</span>
 
-</code></pre>
+</code></pre></div>
 <p>Step 3. Finally set up the CloudWatch Event to Trigger this Lambda to run each time CloudTrail is interrupted.  </p>
 
 <p><img alt="cloudwatch-events" src="defense_against_the_dark_arts_pt1/restore-cloudtrail-40c052bc.png" /></p>
@@ -290,8 +290,8 @@ a known good state based on a number of assumptions.
 
     </div>
     <footer>
-  <div class='mui-container mui--text-center'></div>
-  <hr></hr>
+<div class='mui-container mui--text-center'></div>
+<hr></hr>
 </footer>
 
 
