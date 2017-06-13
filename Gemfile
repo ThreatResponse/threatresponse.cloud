@@ -1,11 +1,13 @@
 source "https://rubygems.org"
 
-gem "middleman"
+gem "middleman", '= 3.4.1'
 gem "middleman-dotenv"
 gem "middleman-livereload"
-gem 'middleman-deploy', '~> 2.0.0.pre.alpha'
-gem "middleman-blog"
+gem "middleman-sync"
+gem "middleman-blog", '= 3.5.3'
 gem 'middleman-gh-pages'
 gem 'compass'
-gem 'redcarpet'
-gem 'builder'
+gem 'middleman-s3_sync'
+gem 'redcarpet', '~> 3.3', '>= 3.3.3'
+gem "builder", "~> 3.0"
+gem 'middleman-rouge'
