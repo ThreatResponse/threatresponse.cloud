@@ -1,0 +1,32 @@
+---
+title: "ThreatResponse at Blackhat 2017"
+date: 2017-07-24 01:00 UTC
+tags: amazon web service blackhat aws_ir lambda azure
+blog: "blog"
+published: true
+---
+
+# Come See us at Blackhat!
+
+## BRIEFINGS
+### Hacking serverless runtimes: profiling aws lambda, azure functions, and more.
+
+Location:  Jasmine Ballroom
+
+Date: Wednesday, July 26 | 1:30pm-2:20pm
+
+Serverless technology is getting increasingly ubiquitous in the enterprise and startup communities. As micro-services multiply and single purpose services grow, how do you audit and defend serverless runtimes? The advantages of serverless runtimes are clear: increased agility, ease of use, and ephemerality (i.e., not managing a fleet of "pet" servers). There is a trade off for that convenience though - reduced transparency. In this talk, we will deep dive into both public data and information unearthed by our research to give you the full story on serverless, how it works, and attack chains in the serverless cloud(s) Azure, AWS, and a few other sandboxes. Who will be the victor in the great sandbox showdown?
+
+[Learn More](https://www.blackhat.com/us-17/briefings/schedule/index.html#hacking-serverless-runtimes-profiling-aws-lambda-azure-functions-and-more-6434)
+
+
+## ARSENAL
+### ThreatResponse: An open source toolkit for automating incident response in AWS - arsenal theater demo.
+
+Location:  Business Hall, Level 2, Arsenal Theater
+
+Date: Thursday, July 27 | 11:15am-12:15pm
+
+ThreatResponse is an open source toolkit for incident response in Amazon. This set of python install-able modules help container host, key, and lambda function compromises using automated incident plans that follow industry best practices for containment.
+
+[Learn More](https://www.blackhat.com/us-17/arsenal/schedule/index.html#threatresponse-an-open-source-toolkit-for-automating-incident-response-in-aws---arsenal-theater-demo-8099)
