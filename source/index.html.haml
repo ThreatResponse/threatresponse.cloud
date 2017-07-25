@@ -36,13 +36,21 @@
         %p
           AWS_IR automates your incident response with zero security preparedness assumptions.
           It can handle key and host compromises and collects all pertinent data in an S3 bucket along with the ThreatResponse Web workstation.
+        %p.center
           =link_to("Read the Docs", "https://aws-ir.readthedocs.io/en/latest/")
 
-      .tool
-        =image_tag 'tr_web.png'
-        %h3 ThreatResponse Web
+      .tool.tool--es
+        =link_to image_tag('ephemeral-logo.png'), 'https://ephemeralsystems.com'
+        %h3 Incident Pony™
         %p
-          This first of its kind IR analysis workstation orchestrates several in-depth types of analysis across your AWS cloud. You can investigate suspicious activity, add instances to your case, view and run further analysis on all captured assets, and run the ThreatPrep advisory panel.
+          Incident Pony is a first of its kind case management and Incident Response orchestration tool specifically designed for AWS.
+
+          By wrapping our open source tools in a web front-end we've made it even easier to manage incidents in your cloud.
+
+        %p.center= link_to 'Learn More', 'https://ephemeralsystems.com/'
+
+
+
       .tool
         =image_tag 'margarita.png'
         %h3 Margarita Shotgun
@@ -50,7 +58,6 @@
           Command line utility that works with or without Amazon EC2 instances to parallelize remote memory acquisition.
 
           %ol
-            %li Identify the running kernel
             %li Load the appropriate module from the ThreatResponse kernel module warehouse
             %li Acquire the memory by streaming to an S3 bucket using multi-part upload over ssh
           =link_to("Read the Docs", "https://margaritashotgun.readthedocs.io/en/latest/")
