@@ -9,4 +9,4 @@ phases:
   post_build:
     commands:
       - aws s3 sync build/ s3://threat-response-cloud/
-      - aws cloudfront create-invalidation --distribution-id E13J2919BK92B1 --paths *
+      - aws cloudfront create-invalidation --distribution-id E13J2919BK92B1 --paths /*
