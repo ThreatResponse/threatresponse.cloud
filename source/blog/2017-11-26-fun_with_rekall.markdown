@@ -95,6 +95,14 @@ $ strings yourfile.dmp | grep -i thing
 
 ```
 
+## Jam Challenge Final Format!
+
+Your finally should be in the form of XXXX:XXXX:XXXX:XXXX
+
+
+Separate them with colons!!  
+
+
 ## Video Walkthrough
 
 See a complete video walkthrough here:
