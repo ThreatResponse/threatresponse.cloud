@@ -6,6 +6,10 @@
         %h3 What's New
         %ul
           %li
+            =link_to 'Live Updates from Re: Invent 2017', "http://bit.ly/2BsSCW0"
+          %li
+            =link_to 'Tweets from Re: Invent 2017', "https://twitter.com/andrewkrug"
+          %li
             =link_to 'DerbyCon Slides', "http://threatresponse-derbycon.s3-website-us-west-2.amazonaws.com/"
           %li
             =link_to 'DerbyCon Video', "https://www.youtube.com/watch?v=cmEUxxYFjK8"
@@ -18,7 +22,7 @@
             =link_to 'Whitepaper', 'https://s3-us-west-2.amazonaws.com/threatresponse-static/us-16-Krug-Hardening-AWS-Environments-and-Automating-Incident-Response-for-AWS-Compromises-wp.pdf'
 
         %h3 Blog Articles
-        -blog.articles[0...3].each do |article|
+        -blog.articles[0...5].each do |article|
           %li
             =link_to article.title, article.url
 
